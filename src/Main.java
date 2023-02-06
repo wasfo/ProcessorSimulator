@@ -10,8 +10,6 @@ public class Main {
 
     public static void main(String[] args) throws IOException, InterruptedException {
 
-       // HashMap<Integer, Boolean> hash;
-       // hash.
 
       //  int numP = Integer.parseInt(args[0]);
      //   int numCyc = Integer.parseInt(args[1]);

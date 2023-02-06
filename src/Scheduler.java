@@ -2,6 +2,11 @@ import java.util.*;
 
 public class Scheduler {
     private PriorityQueue<Task> queue;
+
+    public PriorityQueue<Task> getQueue() {
+        return queue;
+    }
+
     public Scheduler() {
         queue = new PriorityQueue<>(new TaskComparator());
     }
@@ -16,7 +21,6 @@ public class Scheduler {
         for (int i = 0; i < availableProcessors.size(); i++) {
             if (isQueueEmpty()) break;
             availableProcessors.get(i).executeTask(queue.poll());
-            System.out.println(availableProcessors.get(i));
             assignedProcessors.add(availableProcessors.get(i));
         }
         availableProcessors.removeAll(assignedProcessors);
