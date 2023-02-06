@@ -10,30 +10,28 @@ public class Simulator {
      private  Clock clock;
      public final Scheduler scheduler;
      private int taskIndex;
-     private boolean noProcessorsAvailable;
+     private boolean isAnyProcessorAvailable;
 
      public Simulator(int numberOfProcessors, int numberOfCycles, Task []tasks) {
           this.numberOfProcessors = numberOfProcessors;
           this.numberOfCycles = numberOfCycles;
           this.tasks = tasks;
-
           taskIndex = 0;
-          noProcessorsAvailable = false;
-
+          isAnyProcessorAvailable = true;
           clock = new Clock(1);
           scheduler = new Scheduler();
-
           processors = new Processor[numberOfProcessors];
           for (int i = 0; i < numberOfProcessors; i++) {
                processors[i] = new Processor(true, i + 1);
           }
      }
 
-     public boolean isNoProcessorsAvailable() {
-          return noProcessorsAvailable;
+     public boolean isAnyProcessorAvailable() {
+          return isAnyProcessorAvailable;
      }
-     public void setNoProcessorsAvailable(boolean noProcessorsAvailable) {
-          this.noProcessorsAvailable = noProcessorsAvailable;
+
+     public void setAnyProcessorAvailable(boolean anyProcessorAvailable) {
+          isAnyProcessorAvailable = anyProcessorAvailable;
      }
 
      /**
@@ -46,7 +44,6 @@ public class Simulator {
       */
      public void start() throws InterruptedException {
           while (--numberOfCycles > -1) {
-
                System.out.println("Current Cycle : " + clock.getCurrentCycle());
                System.out.println("Current Cycle tasks: ");
                while (taskIndex < tasks.length && tasks[taskIndex].getCreationTime() == clock.getCurrentCycle()) {
@@ -55,19 +52,23 @@ public class Simulator {
                }
                System.out.println("/");
 
-               if (!scheduler.isQueueEmpty() && !isNoProcessorsAvailable()) {
+               if (!scheduler.isQueueEmpty() && isAnyProcessorAvailable()) {
                     scheduler.scheduleTasks(processors);
                }
 
-               clock.goToNextCycle();
-               for (int i = 0; i < numberOfProcessors; i++) {
-                    processors[i].update();
-                    if (processors[i].isAvailable()) {
-                         setNoProcessorsAvailable(false);
-                    }
+               nextCycle();
+               System.out.println();
+               System.out.println();
+          }
+     }
+
+     private void nextCycle() throws InterruptedException {
+          clock.nextCycle();
+          for (int i = 0; i < numberOfProcessors; i++) {
+               processors[i].update();
+               if (processors[i].isAvailable()) {
+                    setAnyProcessorAvailable(true);
                }
-               System.out.println();
-               System.out.println();
           }
      }
 }

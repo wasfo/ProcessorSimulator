@@ -3,7 +3,7 @@ import java.util.*;
 public class Scheduler {
     private PriorityQueue<Task> queue;
     public Scheduler() {
-        queue = new PriorityQueue<Task>(new TaskComparator());
+        queue = new PriorityQueue<>(new TaskComparator());
     }
     public boolean isQueueEmpty() {
         return queue.isEmpty();

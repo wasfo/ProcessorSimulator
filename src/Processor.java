@@ -1,5 +1,5 @@
 public class Processor {
-    public Task currentTask;
+    private Task currentTask;
     private boolean isAvailable;
     private int timeNeededToBeAvailable;
     private long processorID;

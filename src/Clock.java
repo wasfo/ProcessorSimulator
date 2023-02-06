@@ -11,7 +11,7 @@ public class Clock {
     public void setCurrentCycle(int currentCycle) {
         this.currentCycle = currentCycle;
     }
-    public void goToNextCycle() throws InterruptedException {
+    public void nextCycle() throws InterruptedException {
         currentCycle++;
       //  TimeUnit.SECONDS.sleep(1);
     }
