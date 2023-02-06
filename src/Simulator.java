@@ -1,5 +1,6 @@
 import java.sql.SQLOutput;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 public class Simulator {
@@ -10,29 +11,26 @@ public class Simulator {
      private  Clock clock;
      public final Scheduler scheduler;
      private int taskIndex;
-     private boolean isAnyProcessorAvailable;
+   //  private boolean isAnyProcessorAvailable;
+     private List<Processor> availableProcessors;
 
      public Simulator(int numberOfProcessors, int numberOfCycles, Task []tasks) {
           this.numberOfProcessors = numberOfProcessors;
           this.numberOfCycles = numberOfCycles;
           this.tasks = tasks;
           taskIndex = 0;
-          isAnyProcessorAvailable = true;
+     //     isAnyProcessorAvailable = true;
+          availableProcessors = new LinkedList<>();
+
           clock = new Clock(1);
           scheduler = new Scheduler();
           processors = new Processor[numberOfProcessors];
           for (int i = 0; i < numberOfProcessors; i++) {
                processors[i] = new Processor(true, i + 1);
+               availableProcessors.add(processors[i]);
           }
      }
 
-     public boolean isAnyProcessorAvailable() {
-          return isAnyProcessorAvailable;
-     }
-
-     public void setAnyProcessorAvailable(boolean anyProcessorAvailable) {
-          isAnyProcessorAvailable = anyProcessorAvailable;
-     }
 
      /**
           we call function start simulating:
@@ -52,8 +50,8 @@ public class Simulator {
                }
                System.out.println("/");
 
-               if (!scheduler.isQueueEmpty() && isAnyProcessorAvailable()) {
-                    scheduler.scheduleTasks(processors);
+               if (!scheduler.isQueueEmpty() && !availableProcessors.isEmpty()) {
+                    scheduler.scheduleTasks(availableProcessors);
                }
 
                nextCycle();
@@ -67,7 +65,7 @@ public class Simulator {
           for (int i = 0; i < numberOfProcessors; i++) {
                processors[i].update();
                if (processors[i].isAvailable()) {
-                    setAnyProcessorAvailable(true);
+                    availableProcessors.add(processors[i]);
                }
           }
      }

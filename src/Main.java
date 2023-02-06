@@ -17,7 +17,7 @@ public class Main {
      //   int numCyc = Integer.parseInt(args[1]);
   //      String path = args[2];
 
-        File file = new File("C:\\Users\\super\\Desktop\\Tasks\\Testcase1.txt");
+        File file = new File("Tasks2.txt");
         FastScanner f = new FastScanner(file);
         int numOfTasks = f.nextInt();
         Task[] tasks = new Task[numOfTasks];
@@ -34,7 +34,7 @@ public class Main {
         }
 
         long start = System.currentTimeMillis();
-        Simulator simulator = new Simulator(10, 10, tasks);
+        Simulator simulator = new Simulator(2, 10, tasks);
         simulator.start();
         long stop = System.currentTimeMillis();
         double elapsedTime = stop - start;

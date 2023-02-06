@@ -11,15 +11,15 @@ public class Scheduler {
     public void addTask(Task task) {
         queue.add(task);
     }
-    public void scheduleTasks(Processor []processors) {
-        for (int i = 0; i < processors.length; i++) {
-            if (queue.isEmpty()) break;
-            if (processors[i].isAvailable()) {
-                Task task = queue.poll();
-                processors[i].executeTask(task);
-                System.out.println(processors[i]);
-            }
+    public void scheduleTasks(List<Processor> availableProcessors) {
+        List<Processor> assignedProcessors = new LinkedList<>();
+        for (int i = 0; i < availableProcessors.size(); i++) {
+            if (isQueueEmpty()) break;
+            availableProcessors.get(i).executeTask(queue.poll());
+            System.out.println(availableProcessors.get(i));
+            assignedProcessors.add(availableProcessors.get(i));
         }
+        availableProcessors.removeAll(assignedProcessors);
     }
 
     class TaskComparator implements Comparator<Task> {
