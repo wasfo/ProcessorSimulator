@@ -1,49 +1,57 @@
 import java.io.*;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Queue;
+import java.security.InvalidParameterException;
 import java.util.StringTokenizer;
 
 public class Main {
 
     public static void main(String[] args) throws IOException, InterruptedException {
+//        int numberOfProcessors = Integer.parseInt(args[0]);
+//        int numberOfCycles = Integer.parseInt(args[1]);
+//        String path = args[2];
+        int numberOfProcessors = 200;
+        int numberOfCycles = 200;
+         String path = "C:\\Users\\super\\Desktop\\Tasks\\1thousand\\10k2.txt";
+       // String path = "Tasks2.txt";
+        if(numberOfProcessors < 0 || numberOfCycles < 0){
+            throw new InvalidParameterException();
+        }
+        FastScanner fastScanner = readFile(path);
+        startSimulation(getTasks(fastScanner), numberOfProcessors, numberOfCycles);
+    }
+    // 112126
+    // 19792
 
+    private static void startSimulation(Task[] tasks, int numberOfProcessors,int numberOfCycles) throws InterruptedException {
+        long start =  java.lang.System.currentTimeMillis();
+        Simulator simulator = new Simulator(numberOfProcessors, numberOfCycles, tasks);
+        simulator.start();
+        long stop =  java.lang.System.currentTimeMillis();
+        double elapsedTime = stop - start;
 
-      //  int numP = Integer.parseInt(args[0]);
-     //   int numCyc = Integer.parseInt(args[1]);
-  //      String path = args[2];
-
-        File file = new File("Tasks2.txt");
-        FastScanner f = new FastScanner(file);
-        int numOfTasks = f.nextInt();
+        System.out.println(start + " " + stop);
+        System.out.println("simulation time : " + elapsedTime);
+    }
+    private static Task[] getTasks(FastScanner fastScanner) {
+        int numOfTasks = fastScanner.nextInt();
         Task[] tasks = new Task[numOfTasks];
-        System.out.println(numOfTasks);
-
         for (int i = 0; i < numOfTasks; i++) {
-            int creationTime = f.nextInt();
-            int executionTime = f.nextInt();
-            int priority = f.nextInt();
+            int creationTime = fastScanner.nextInt();
+            int executionTime = fastScanner.nextInt();
+            int priority = fastScanner.nextInt();
             tasks[i] = new Task(creationTime, executionTime, priority, "T" + (i + 1));
         }
-        for (int j = 0; j < numOfTasks; j++) {
-            System.out.println(tasks[j]);
-        }
-
-        long start = System.currentTimeMillis();
-        Simulator simulator = new Simulator(2, 10, tasks);
-        simulator.start();
-        long stop = System.currentTimeMillis();
-        double elapsedTime = stop - start;
-        System.out.println(elapsedTime/1000.0);
+        return tasks;
     }
-
-
+    private static FastScanner readFile(String path) throws FileNotFoundException {
+        File file = new File(path);
+        FastScanner f = new FastScanner(file);
+        return f;
+    }
     static class FastScanner {
         BufferedReader br;
         StringTokenizer st = new StringTokenizer("");
-
         FastScanner(File file) throws FileNotFoundException {
             br = new BufferedReader(new FileReader(file));
         }
@@ -60,16 +68,5 @@ public class Main {
         int nextInt() {
             return Integer.parseInt(next());
         }
-        long nextLong() {
-
-            return Long.parseLong(next());
-        }
-        double nextDouble() {
-            return Double.parseDouble(next());
-        }
-        String nextLine() throws IOException {
-            return br.readLine();
-        }
     }
 }
-

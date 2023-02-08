@@ -2,11 +2,9 @@ import java.util.*;
 
 public class Scheduler {
     private PriorityQueue<Task> queue;
-
     public PriorityQueue<Task> getQueue() {
         return queue;
     }
-
     public Scheduler() {
         queue = new PriorityQueue<>(new TaskComparator());
     }
@@ -16,17 +14,17 @@ public class Scheduler {
     public void addTask(Task task) {
         queue.add(task);
     }
-    public void scheduleTasks(List<Processor> availableProcessors) {
+    public void scheduleTasks(Set<Processor> availableProcessors, Set<Processor> busyProcessor) {
         List<Processor> assignedProcessors = new LinkedList<>();
-        for (int i = 0; i < availableProcessors.size(); i++) {
+        for (Processor availableProcessor : availableProcessors) {
             if (isQueueEmpty()) break;
-            availableProcessors.get(i).executeTask(queue.poll());
-            assignedProcessors.add(availableProcessors.get(i));
+            availableProcessor.executeTask(queue.poll());
+            assignedProcessors.add(availableProcessor);
+            busyProcessor.add(availableProcessor);
         }
         availableProcessors.removeAll(assignedProcessors);
     }
-
-    class TaskComparator implements Comparator<Task> {
+    static class TaskComparator implements Comparator<Task> {
         @Override
         public int compare(Task taskOne, Task taskTwo) {
             if (taskOne.getPriority() > taskTwo.getPriority()) return -1;

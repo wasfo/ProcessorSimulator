@@ -1,66 +1,92 @@
 import java.sql.SQLOutput;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class Simulator {
      private final Task []tasks;
      private final int numberOfProcessors;
-     private int numberOfCycles;
-     private final Processor [] processors;
+     private int simulationLength;
+  //   private final Processor [] processors;
      private  Clock clock;
      public final Scheduler scheduler;
      private int taskIndex;
-   //  private boolean isAnyProcessorAvailable;
-     private List<Processor> availableProcessors;
+     private Set<Processor> availableProcessors;
+     private Set<Processor> busyProcessors;
 
-     public Simulator(int numberOfProcessors, int numberOfCycles, Task []tasks) {
+     private Integer initiatedProcessors;
+     public Simulator(int numberOfProcessors, int simulationLength, Task []tasks) {
           this.numberOfProcessors = numberOfProcessors;
-          this.numberOfCycles = numberOfCycles;
+          this.simulationLength = simulationLength;
           this.tasks = tasks;
           taskIndex = 0;
-     //     isAnyProcessorAvailable = true;
-          availableProcessors = new LinkedList<>();
-
+          availableProcessors = new HashSet<>();
+          busyProcessors = new HashSet<>();
           clock = new Clock(1);
           scheduler = new Scheduler();
-          processors = new Processor[numberOfProcessors];
-          for (int i = 0; i < numberOfProcessors; i++) {
-               processors[i] = new Processor(true, i + 1);
-               availableProcessors.add(processors[i]);
-          }
+          initiatedProcessors = 0;
+      //    processors = new Processor[numberOfProcessors];
+//          for (int i = 0; i < numberOfProcessors; i++) {
+//      //         processors[i] = new Processor(true, i + 1);
+//               availableProcessors.add(new Processor(true, i + 1));
+//          }
+     }
+
+    public void setSimulatorClockDuration(int duration){
+          clock.setCycleDuration(duration);
      }
      public void start() throws InterruptedException {
-          while (--numberOfCycles > -1) {
+          while (!endProgram()) {
                while (taskIndex < tasks.length && tasks[taskIndex].getCreationTime() == clock.getCurrentCycle()) {
-                    System.out.println(tasks[taskIndex]);
                     scheduler.addTask(tasks[taskIndex++]);
                }
-               System.out.println("/");
-               if (!scheduler.isQueueEmpty() && !availableProcessors.isEmpty()) {
-                    scheduler.scheduleTasks(availableProcessors);
+               if (!scheduler.isQueueEmpty()) {
+                   while (initiatedProcessors < numberOfProcessors && availableProcessors.size() < scheduler.getQueue().size()) {
+                       availableProcessors.add(new Processor(true, initiatedProcessors + 1));
+                       initiatedProcessors += 1;
+                   }
+
+                   if (!availableProcessors.isEmpty()) {
+                       scheduler.scheduleTasks(availableProcessors, busyProcessors);
+                   }
                }
-               report();
-               nextCycle();
+           //    System.out.println(taskIndex + " " + tasks.length + " " + scheduler.isQueueEmpty() + " " + availableProcessors.size() + " " + numberOfProcessors);
+              report();
+              nextCycle();
+
+
+               for (int i = 0; i < 100000000;) {
+                    i++;
+               }
           }
-          report();
+
+
+
+         System.out.println(availableProcessors.size());
+         System.out.println("execution time : " + clock.getCurrentCycle());
+          System.out.println("Simulation is done");
+     }
+     public boolean endProgram(){
+
+          return taskIndex == tasks.length && scheduler.isQueueEmpty() && busyProcessors.size() == 0;
      }
      private void nextCycle() throws InterruptedException {
           clock.nextCycle();
-          for (int i = 0; i < numberOfProcessors; i++) {
-               processors[i].update();
-               if (processors[i].isAvailable()) {
-                    availableProcessors.add(processors[i]);
+          List<Processor> newAvailableProcessors = new LinkedList<>();
+          for (Processor processor : busyProcessors) {
+               processor.update();
+               if (processor.isAvailable()) {
+                    availableProcessors.add(processor);
+                    newAvailableProcessors.add(processor);
                }
           }
+          busyProcessors.removeAll(newAvailableProcessors);
      }
      public void report(){
           System.out.println("current cycle:" +  clock.getCurrentCycle());
-          for (int i = 0; i < numberOfProcessors; i++) {
-               System.out.println(processors[i]);
+          for (Processor processor : busyProcessors) {
+               System.out.println(processor);
           }
+          System.out.println("Number of available processors: " + (availableProcessors.size() + numberOfProcessors - initiatedProcessors));
           System.out.println("-------------");
           System.out.println("in queue: "+ scheduler.getQueue());
      }
-
 }

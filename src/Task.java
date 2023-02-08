@@ -4,7 +4,7 @@ public class Task {
     private final int creationTime;
     private final int executionTime;
     private final int priority;
-    private String taskID;
+    private final String taskID;
 
     public Task(int creationTime, int executionTime, int priority, String taskID) {
         this.creationTime = creationTime;
