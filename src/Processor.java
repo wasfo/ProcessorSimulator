@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 public class Processor {
     private Task currentTask;
     private boolean isAvailable;
@@ -16,9 +18,8 @@ public class Processor {
         setAvailable(false);
     }
     public void update() {
-        if (!isAvailable()) {
+        if (!isAvailable())
             timeNeededToBeAvailable--;
-        }
         if (timeNeededToBeAvailable == 0) {
             setAvailable(true);
             if (currentTask != null) {
@@ -37,5 +38,18 @@ public class Processor {
     @Override
     public String toString() {
         return "Processor " + processorID + " is executing " + currentTask + " / time needed = " + timeNeededToBeAvailable;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Processor processor = (Processor) o;
+        return processorID == processor.processorID;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(processorID);
     }
 }

@@ -1,5 +1,4 @@
 import java.util.concurrent.TimeUnit;
-
 public class Clock {
     private int currentCycle;
     private int cycleDuration = 1;

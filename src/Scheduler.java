@@ -15,14 +15,12 @@ public class Scheduler {
         queue.add(task);
     }
     public void scheduleTasks(Set<Processor> availableProcessors, Set<Processor> busyProcessor) {
-        List<Processor> assignedProcessors = new LinkedList<>();
         for (Processor availableProcessor : availableProcessors) {
             if (isQueueEmpty()) break;
             availableProcessor.executeTask(queue.poll());
-            assignedProcessors.add(availableProcessor);
             busyProcessor.add(availableProcessor);
         }
-        availableProcessors.removeAll(assignedProcessors);
+        availableProcessors.removeAll(busyProcessor);
     }
     static class TaskComparator implements Comparator<Task> {
         @Override

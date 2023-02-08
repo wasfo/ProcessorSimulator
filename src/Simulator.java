@@ -29,45 +29,48 @@ public class Simulator {
                while (taskIndex < tasks.length && tasks[taskIndex].getCreationTime() == clock.getCurrentCycle()) {
                     scheduler.addTask(tasks[taskIndex++]);
                }
-              initializeProcessors();
+
+              if (!scheduler.isQueueEmpty()) {
+                  initializeProcessors();
+                  scheduleTasks();
+              }
               report();
               nextCycle();
           }
           System.out.println("Simulation is done");
      }
     private void initializeProcessors() {
-        if (!scheduler.isQueueEmpty()) {
             while (initiatedProcessors < numberOfProcessors && availableProcessors.size() < scheduler.getQueue().size()) {
                 availableProcessors.add(new Processor(true, initiatedProcessors + 1));
                 initiatedProcessors += 1;
             }
-            if (!availableProcessors.isEmpty()) {
-                scheduler.scheduleTasks(availableProcessors, busyProcessors);
-            }
+    }
+    private void scheduleTasks() {
+        if (!availableProcessors.isEmpty()) {
+            scheduler.scheduleTasks(availableProcessors, busyProcessors);
         }
     }
+
     public boolean endProgram(){
           return taskIndex == tasks.length && scheduler.isQueueEmpty() && busyProcessors.size() == 0;
      }
      private void nextCycle() throws InterruptedException {
           clock.nextCycle();
-          List<Processor> newAvailableProcessors = new LinkedList<>();
           for (Processor processor : busyProcessors) {
                processor.update();
                if (processor.isAvailable()) {
                     availableProcessors.add(processor);
-                    newAvailableProcessors.add(processor);
                }
           }
-          busyProcessors.removeAll(newAvailableProcessors);
+          busyProcessors.removeAll(availableProcessors);
      }
      public void report(){
           System.out.println("current cycle:" +  clock.getCurrentCycle());
+          System.out.println("in queue: "+ scheduler.getQueue());
           for (Processor processor : busyProcessors) {
                System.out.println(processor);
           }
           System.out.println("Number of available processors: " + (availableProcessors.size() + numberOfProcessors - initiatedProcessors));
-          System.out.println("in queue: "+ scheduler.getQueue());
           System.out.println("------------------------------------------------------");
      }
 }
