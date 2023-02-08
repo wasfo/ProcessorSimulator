@@ -14,6 +14,6 @@ public class Clock {
     }
     public void nextCycle() throws InterruptedException {
         currentCycle++;
-        //TimeUnit.SECONDS.sleep(cycleDuration);
+        TimeUnit.SECONDS.sleep(cycleDuration);
     }
 }

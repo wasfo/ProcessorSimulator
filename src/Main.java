@@ -10,18 +10,16 @@ public class Main {
 //        int numberOfProcessors = Integer.parseInt(args[0]);
 //        int numberOfCycles = Integer.parseInt(args[1]);
 //        String path = args[2];
-        int numberOfProcessors = 200;
-        int numberOfCycles = 200;
-         String path = "C:\\Users\\super\\Desktop\\Tasks\\1thousand\\10k2.txt";
-       // String path = "Tasks2.txt";
+        int numberOfProcessors = 4;
+        int numberOfCycles = 12;
+       //  String path = "C:\\Users\\super\\Desktop\\Tasks\\1thousand\\10k2.txt";
+        String path = "Tasks.txt";
         if(numberOfProcessors < 0 || numberOfCycles < 0){
             throw new InvalidParameterException();
         }
         FastScanner fastScanner = readFile(path);
         startSimulation(getTasks(fastScanner), numberOfProcessors, numberOfCycles);
     }
-    // 112126
-    // 19792
 
     private static void startSimulation(Task[] tasks, int numberOfProcessors,int numberOfCycles) throws InterruptedException {
         long start =  java.lang.System.currentTimeMillis();
